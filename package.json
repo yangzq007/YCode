@@ -1,0 +1,21 @@
+{
+    "name": "YCode",
+    "version": "0.0.1",
+    "description": "YCode - 致力于iOS平台的代码整洁和可读性的工具集",
+    "main": "index.js",
+    "bin": {
+        "ycode": "./bin/index.js"
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git@github.com:yangzq007/YCode.git"
+    },
+    "author": "yangzq007@126.com",
+    "license": "ISC",
+    "dependencies": {
+        "commander": "^2.15.1"
+    }
+}
