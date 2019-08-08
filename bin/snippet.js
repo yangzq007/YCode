@@ -30,7 +30,7 @@ function userTag(tag) {
     fs.writeFileSync(fp, str);
   });
 
-  execSync(`cd ${p} && git add . && git commit -s -m "[feat] 配置userTag"`);
+  execSync(`cd ${p} && git add . && git commit -s -m "feat: 配置userTag"`);
 
   console.log("ycode: config usertag success!");
 }
@@ -50,7 +50,7 @@ function key(key) {
     fs.writeFileSync(fp, str);
   });
 
-  execSync(`cd ${p} && git add . && git commit -s -m "[feat] 配置key"`);
+  execSync(`cd ${p} && git add . && git commit -s -m "feat: 配置key"`);
 
   console.log("ycode: config key success!")
 }
