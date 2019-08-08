@@ -1,74 +1,58 @@
 #!/usr/bin/env node
 
 const execSync = require('child_process').execSync;
-const readline = require('readline');
 const fs = require('fs');
 const os = require('os');
 
-var userTag = "YCode";
-var key = "y";
-
-const userTagPlaceholder = /\$\$userTag\$\$/;
-const keyPlaceholder = /\$\$key\$\$/;
-
-function answer2Question(questtion) {
-
-  return new Promise((resolve, reject) => {
-    var rl = readline.createInterface({ input: process.stdin, output: process.stdout });
-    rl.question(questtion, (answer) => {
-      rl.close();
-      resolve(answer);
-    });
-  });
-}
-
 function download() {
 
-  console.log("ycode delete old codeSnippets ...")
+  console.log("delete old codeSnippets ...")
   execSync("rm -rf ~/Library/Developer/Xcode/UserData/CodeSnippets");
 
-  console.log("ycode clone new codeSnippets ...");
+  console.log("clone new codeSnippets ...");
   execSync("cd ~/Library/Developer/Xcode/UserData/ && git clone https://github.com/yangzq007/CodeSnippets.git");
-  //debug code
-  // execSync("cd ~/Library/Developer/Xcode/UserData/ && git clone https://github.com/yangzq007/CodeSnippets.git  && cd CodeSnippets && git checkout develop");
 
-  config();
+  console.log("ycode: CodeSnippets init success!");
 }
 
-function config() {
+function userTag(tag) {
 
-  console.log('ycode start config ...');
-
+  const desTag = tag == undefined ? "YCode" : tag;
   const p = `${os.homedir()}/Library/Developer/Xcode/UserData/CodeSnippets`;
-  execSync(`cd ${p} && git branch ${userTag} && git checkout ${userTag}`);
-  const files = fs.readdirSync(p);
-  files.forEach((item, index) => {
-    if (item.indexOf(".codesnippet") != -1) {
-      const filePath = `${p}/${item}`;
-      const data = fs.readFileSync(filePath);
-      const str = data.toString().replace(userTagPlaceholder,userTag).replace(keyPlaceholder,key);
-      fs.writeFileSync(filePath,str); 
-    }
-  });
-  execSync(`cd ${p} && git add . && git commit -s -m "[Add] ${userTag}"`);
+  const placeholder = " YCode ";
+  const text = ` ${desTag} `;
 
-  console.log('ycode success!')
+  fs.readdirSync(p).forEach((item, index) => {
+    if (item.indexOf(".codesnippet") == -1) return;
+    console.log(`config ${item}...`)
+    const fp = `${p}/${item}`;
+    const str = fs.readFileSync(fp).toString().replace(placeholder, text);
+    fs.writeFileSync(fp, str);
+  });
+
+  execSync(`cd ${p} && git add . && git commit -s -m "[feat] 配置userTag"`);
+
+  console.log("ycode: config usertag success!");
 }
 
-const snippet = function snippet() {
+function key(key) {
 
-  answer2Question('userTag(default is YCode):').then(res => {
-    if (res != "") {
-      userTag = res; 
-    }
-    return answer2Question("key(default is y):");
-  }).then(res => {
-    if (res != "") {
-      key = res; 
-    }
-    download();
-  }).catch(error => {
-    console.log(`readline error: ${error}`);
+  const desKey = key == undefined ? "y" :key;
+  const p = `${os.homedir()}/Library/Developer/Xcode/UserData/CodeSnippets`;
+  const placeholder = "<key>IDECodeSnippetCompletionPrefix</key>\n	<string>y";
+  const text = `<key>IDECodeSnippetCompletionPrefix</key>\n	<string>${desKey}`;
+
+  fs.readdirSync(p).forEach((item, index) => {
+    if (item.indexOf(".codesnippet") == -1) return;
+    console.log(`config ${item}...`)
+    const fp = `${p}/${item}`;
+    const str = fs.readFileSync(fp).toString().replace(placeholder, text);
+    fs.writeFileSync(fp, str);
   });
+
+  execSync(`cd ${p} && git add . && git commit -s -m "[feat] 配置key"`);
+
+  console.log("ycode: config key success!")
 }
-module.exports = snippet;
+
+module.exports = { download, userTag, key };
