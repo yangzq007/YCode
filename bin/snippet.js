@@ -57,11 +57,11 @@ function config() {
 
 const snippet = function snippet() {
 
-  answer2Question('userTag:').then(res => {
+  answer2Question('userTag(default is YCode):').then(res => {
     if (res != "") {
       userTag = res; 
     }
-    return answer2Question("key:");
+    return answer2Question("key(default is y):");
   }).then(res => {
     if (res != "") {
       key = res; 
