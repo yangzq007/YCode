@@ -40,6 +40,7 @@ function config() {
   console.log('ycode start config ...');
 
   const p = `${os.homedir()}/Library/Developer/Xcode/UserData/CodeSnippets`;
+  execSync(`cd ${p} && git branch ${userTag} && git checkout ${userTag}`);
   const files = fs.readdirSync(p);
   files.forEach((item, index) => {
     if (item.indexOf(".codesnippet") != -1) {
@@ -49,6 +50,7 @@ function config() {
       fs.writeFileSync(filePath,str); 
     }
   });
+  execSync(`cd ${p} && git add . && git commit -s -m "[Add] ${userTag}"`);
 
   console.log('ycode success!')
 }
