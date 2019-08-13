@@ -4,13 +4,45 @@ const execSync = require('child_process').execSync;
 const fs = require('fs');
 const os = require('os');
 
+function isYCodeSnippet(filename) {
+  var res = false;
+  const p = `${os.homedir()}/Library/Developer/Xcode/UserData/CodeSnippets`;
+  const files = fs.readdirSync(p);
+  for (let index = 0; index < files.length; index++) {
+    if (files[index] == filename) {
+      res = true;
+      break; 
+    }
+  }
+  return res;
+}
+
 function download() {
 
-  console.log("delete old codeSnippets ...")
+  console.log("backup old codeSnippets ...");
+  const pathBackup = `${os.homedir()}/Library/Developer/Xcode/UserData/CodeSnippets_ycode_backup`;
+  if (!fs.existsSync(pathBackup)) {
+    fs.mkdirSync(pathBackup);
+  }
+  execSync(`rm -rf ${pathBackup}/*`);
+  execSync(`cp -a ~/Library/Developer/Xcode/UserData/CodeSnippets/* ${pathBackup}`);
+
+  console.log("delete old codeSnippets ...");
   execSync("rm -rf ~/Library/Developer/Xcode/UserData/CodeSnippets");
 
   console.log("clone new codeSnippets ...");
   execSync("cd ~/Library/Developer/Xcode/UserData/ && git clone https://github.com/yangzq007/CodeSnippets.git");
+
+  console.log("add custom codeSnippets from backup ...");
+  var arrCustom = [];
+  fs.readdirSync(pathBackup).forEach((item,index)=>{
+    if (!isYCodeSnippet(item)) {
+      arrCustom.push(item);
+    }
+  });
+  arrCustom.forEach((item)=>{
+    execSync(`cp -a ${pathBackup}/${item} ~/Library/Developer/Xcode/UserData/CodeSnippets/`);
+  });
 
   console.log("ycode: CodeSnippets init success!");
 }
