@@ -21,11 +21,17 @@ function download() {
 
   console.log("backup old codeSnippets ...");
   const pathBackup = `${os.homedir()}/Library/Developer/Xcode/UserData/CodeSnippets_ycode_backup`;
+  const pathSnippets = `${os.homedir()}/Library/Developer/Xcode/UserData/CodeSnippets`;
   if (!fs.existsSync(pathBackup)) {
     fs.mkdirSync(pathBackup);
   }
+  if (!fs.existsSync(pathSnippets)) {
+    fs.mkdirSync(pathSnippets);
+  }
   execSync(`rm -rf ${pathBackup}/*`);
-  execSync(`cp -a ~/Library/Developer/Xcode/UserData/CodeSnippets/* ${pathBackup}`);
+  if (fs.readdirSync(pathSnippets).length > 0) {
+    execSync(`cp -a ~/Library/Developer/Xcode/UserData/CodeSnippets/* ${pathBackup}`); 
+  }
 
   console.log("delete old codeSnippets ...");
   execSync("rm -rf ~/Library/Developer/Xcode/UserData/CodeSnippets");
